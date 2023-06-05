@@ -3,8 +3,12 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
+
+// ErrorDuplicate указывает на конфликт данных в хранилище
+var ErrorDuplicate = errors.New("data conflict duplicate")
 
 type Repository struct {
 	db *sql.DB

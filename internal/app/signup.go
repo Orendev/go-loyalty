@@ -4,8 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"github.com/Orendev/go-loyalty/internal/auth"
 	"github.com/Orendev/go-loyalty/internal/models"
+	"github.com/Orendev/go-loyalty/internal/repository"
 	"github.com/google/uuid"
 	"net/http"
 )
@@ -37,8 +39,8 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		ID:       uuid.New().String(),
 	}
 	err := a.repo.AddNewUser(r.Context(), user)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+	if err != nil && errors.Is(err, repository.ErrorDuplicate) {
+		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
 
@@ -55,5 +57,5 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
