@@ -45,6 +45,10 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r, err = auth.ContextToHTTP(w, r.WithContext(ctx))
+	if err != nil {
+		http.Error(w, "server error", http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }

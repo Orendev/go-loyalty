@@ -34,7 +34,7 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	user := models.User{
 		Login:    loginReq.Login,
 		Password: hex.EncodeToString(hash[:]),
-		Id:       uuid.New().String(),
+		ID:       uuid.New().String(),
 	}
 	err := a.repo.AddNewUser(r.Context(), user)
 	if err != nil {
@@ -48,7 +48,12 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}
+
 	r, err = auth.ContextToHTTP(w, r.WithContext(ctx))
+	if err != nil {
+		http.Error(w, "server error", http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
 }
