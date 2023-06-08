@@ -86,9 +86,6 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if len(orders) == 0 {
-		w.WriteHeader(http.StatusNoContent)
-	}
 
 	for _, order := range orders {
 		// заполняем модель ответа
@@ -105,7 +102,12 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+
+	if len(orders) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 
 	_, err = w.Write(enc)
 	if err != nil {
