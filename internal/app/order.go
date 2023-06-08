@@ -93,7 +93,7 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 	for _, order := range orders {
 		// заполняем модель ответа
 		orderResponse = append(orderResponse, models.OrderResponse{
-			Number:     order.Number,
+			Number:     strconv.Itoa(order.Number),
 			Status:     order.Status,
 			UploadedAt: order.UploadedAt,
 		})
