@@ -20,8 +20,8 @@ func (a *App) Routes(r chi.Router) chi.Router {
 	r.Group(func(r chi.Router) {
 		r.Use(middlewares.Auth)
 
-		//r.Post("/api/user/orders", a.Signup)
-		//r.Get("/api/user/orders", a.Signup)
+		r.Post("/api/user/orders", a.PostOrders)
+		r.Get("/api/user/orders", a.GetOrders)
 		//r.Get("/api/user/balance", a.Login)
 		//r.Post("/api/user/balance/withdraw", a.Login)
 		//r.Get("/api/user/withdrawals", a.Login)

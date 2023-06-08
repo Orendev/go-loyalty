@@ -33,19 +33,20 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash := md5.Sum([]byte(loginReq.Password))
+	userID := uuid.New().String()
 	user := models.User{
+		ID:       userID,
 		Login:    loginReq.Login,
 		Password: hex.EncodeToString(hash[:]),
-		ID:       uuid.New().String(),
 	}
-	err := a.repo.AddNewUser(r.Context(), user)
+	err := a.repo.AddUser(r.Context(), user)
 	if err != nil && errors.Is(err, repository.ErrorDuplicate) {
 		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
 
 	//аутентификация пользователя
-	ctx, err := auth.NewSigner(r.Context())
+	ctx, err := auth.NewSigner(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return

@@ -32,14 +32,14 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	hash := md5.Sum([]byte(loginReq.Password))
 	hashedPass := hex.EncodeToString(hash[:])
 
-	_, err := a.repo.Login(r.Context(), loginReq.Login, hashedPass)
+	user, err := a.repo.Login(r.Context(), loginReq.Login, hashedPass)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	//аутентификация пользователя
-	ctx, err := auth.NewSigner(r.Context())
+	ctx, err := auth.NewSigner(r.Context(), user.ID)
 	if err != nil {
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return

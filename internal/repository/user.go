@@ -20,7 +20,7 @@ func (r *Repository) Login(ctx context.Context, login, password string) (u model
 	return
 }
 
-func (r *Repository) AddNewUser(ctx context.Context, u models.User) (err error) {
+func (r *Repository) AddUser(ctx context.Context, u models.User) (err error) {
 	_, err = r.db.ExecContext(ctx, `insert into users (id, login, password) values ($1, $2, $3)`, u.ID, u.Login, u.Password)
 	if err != nil {
 		var pgErr *pgconn.PgError

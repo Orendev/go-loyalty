@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"net/http"
 	"strings"
 	"time"
@@ -135,12 +134,8 @@ func ContextToHTTP(w http.ResponseWriter, r *http.Request) (*http.Request, error
 }
 
 // NewSigner создаёт JWT, указывая идентификатор ключа,
-func NewSigner(ctx context.Context) (context.Context, error) {
+func NewSigner(ctx context.Context, userID string) (context.Context, error) {
 
-	userID, err := GetAuthIdentifier(ctx)
-	if err != nil {
-		userID = uuid.New().String()
-	}
 	// создаём новый токен с алгоритмом подписи HS256 и утверждениями — Claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{

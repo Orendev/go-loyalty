@@ -29,7 +29,20 @@ func (r *Repository) Bootstrap(ctx context.Context) error {
 	    id UUID NOT NULL primary key, 
 	    login VARCHAR(200) NOT NULL UNIQUE, 
 	    password VARCHAR(200) NOT NULL
-	    )`
+	    );
+	
+	CREATE TABLE IF NOT EXISTS orders (
+	    id UUID NOT NULL primary key, 
+	    number BIGINT NOT NULL UNIQUE,
+	    status VARCHAR(200) NOT NULL DEFAULT 'NEW', 
+	    user_id UUID NOT NULL,
+		uploaded_at TIMESTAMP,
+	    CONSTRAINT fk_user
+	        FOREIGN KEY (user_id)
+	    		REFERENCES users(id)
+	    );   
+	    
+	    `
 
 	_, err := r.db.ExecContext(
 		ctx,
