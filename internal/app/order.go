@@ -72,6 +72,7 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	limit := 100
+	w.Header().Set("Content-Type", "application/json")
 	userID, err := auth.GetAuthIdentifier(r.Context())
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -87,7 +88,6 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(orders) == 0 {
 		w.WriteHeader(http.StatusNoContent)
-		return
 	}
 
 	for _, order := range orders {
@@ -97,15 +97,6 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 			Status:     order.Status,
 			UploadedAt: order.UploadedAt,
 		})
-	}
-
-	if err != nil {
-		if errors.Is(err, repository.ErrorDuplicate) {
-			http.Error(w, err.Error(), http.StatusOK)
-			return
-		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 
 	// заполняем модель ответа
