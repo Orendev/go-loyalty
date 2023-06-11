@@ -51,7 +51,7 @@ func (a *App) PostWithdraw(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if account.Current < req.Sum {
-		http.Error(w, err.Error(), http.StatusPaymentRequired)
+		http.Error(w, "", http.StatusPaymentRequired)
 		return
 	}
 

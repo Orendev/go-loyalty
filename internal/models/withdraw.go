@@ -26,7 +26,7 @@ func (withdraw *WithdrawRequest) Validate() error {
 	return err
 }
 
-func (w WithdrawRequest) MarshalJSON() ([]byte, error) {
+func (withdraw WithdrawRequest) MarshalJSON() ([]byte, error) {
 	// чтобы избежать рекурсии при json.Marshal, объявляем новый тип
 	type AccountResponseAlias WithdrawRequest
 
@@ -36,16 +36,16 @@ func (w WithdrawRequest) MarshalJSON() ([]byte, error) {
 		Sum float64 `json:"sum"`
 	}{
 		// встраиваем значение всех полей изначального объекта (embedding)
-		AccountResponseAlias: AccountResponseAlias(w),
+		AccountResponseAlias: AccountResponseAlias(withdraw),
 		// задаём значение для переопределённого поля
-		Sum: float64(w.Sum) / Rate,
+		Sum: float64(withdraw.Sum) / Rate,
 	}
 
 	return json.Marshal(aliasValue) // вызываем стандартный Marshal
 }
 
 // UnmarshalJSON реализует интерфейс json.Unmarshaler.
-func (w *WithdrawRequest) UnmarshalJSON(data []byte) (err error) {
+func (withdraw *WithdrawRequest) UnmarshalJSON(data []byte) (err error) {
 	// чтобы избежать рекурсии при json.Unmarshal, объявляем новый тип
 	type WithdrawRequestAlias WithdrawRequest
 
@@ -54,13 +54,13 @@ func (w *WithdrawRequest) UnmarshalJSON(data []byte) (err error) {
 		// переопределяем поле внутри анонимной структуры
 		Sum float64 `json:"sum"`
 	}{
-		WithdrawRequestAlias: (*WithdrawRequestAlias)(w),
+		WithdrawRequestAlias: (*WithdrawRequestAlias)(withdraw),
 	}
 	// вызываем стандартный Unmarshal
 	if err = json.Unmarshal(data, aliasValue); err != nil {
 		return
 	}
 
-	w.Sum = int(aliasValue.Sum * Rate)
+	withdraw.Sum = int(aliasValue.Sum * Rate)
 	return
 }
