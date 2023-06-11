@@ -76,7 +76,7 @@ func (a *App) PostWithdraw(w http.ResponseWriter, r *http.Request) {
 	}
 
 	current := account.Current - req.Sum
-	err = a.repo.UpdateAccountCurrent(r.Context(), current)
+	err = a.repo.UpdateAccountCurrent(r.Context(), account.ID, current)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -67,14 +67,14 @@ func (r *Repository) GetAccountByUserID(ctx context.Context, userID string) (*mo
 	return &account, nil
 }
 
-func (r *Repository) UpdateAccountCurrent(ctx context.Context, current int) (err error) {
+func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, current int) (err error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return
 	}
 
 	stmt, err := tx.PrepareContext(ctx,
-		`UPDATE accounts SET current = $1, updated_at = $2`)
+		`UPDATE accounts SET current = $1, updated_at = $2 WHERE id = $3`)
 	if err != nil {
 		return
 	}
@@ -87,7 +87,7 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, current int) (err
 
 	now := time.Now()
 	updatedAt := now.Format(time.RFC3339)
-	_, err = stmt.ExecContext(ctx, current, updatedAt)
+	_, err = stmt.ExecContext(ctx, current, updatedAt, id)
 
 	if err != nil {
 		// если ошибка, то откатываем изменения
