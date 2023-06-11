@@ -11,10 +11,7 @@ type Order struct {
 	UserID     string `json:"user_id" db:"user_id"`
 	UploadedAt string `json:"uploaded_at" db:"uploaded_at"`
 }
-type NullString struct {
-	String string
-	Valid  bool
-}
+
 type OrderResponse struct {
 	Number     string `json:"number"`
 	Status     string `json:"status"`
@@ -30,23 +27,4 @@ func (o *Order) Validate() error {
 	}
 
 	return err
-}
-
-func checksum(number int) int {
-	var luhn int
-
-	for i := 0; number > 0; i++ {
-		cur := number % 10
-
-		if i%2 == 0 { // even
-			cur = cur * 2
-			if cur > 9 {
-				cur = cur%10 + cur/10
-			}
-		}
-
-		luhn += cur
-		number = number / 10
-	}
-	return luhn % 10
 }

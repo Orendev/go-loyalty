@@ -2,11 +2,10 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/Orendev/go-loyalty/internal/models"
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/google/uuid"
+	"time"
 )
 
 func (r *Repository) Login(ctx context.Context, login, password string) (u models.User, err error) {
@@ -21,14 +20,49 @@ func (r *Repository) Login(ctx context.Context, login, password string) (u model
 }
 
 func (r *Repository) AddUser(ctx context.Context, u models.User) (err error) {
-	_, err = r.db.ExecContext(ctx, `insert into users (id, login, password) values ($1, $2, $3)`, u.ID, u.Login, u.Password)
+	tx, err := r.db.Begin()
 	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgerrcode.UniqueViolation == pgErr.Code {
-			err = ErrorDuplicate
-		}
-		err = fmt.Errorf("failed to exec data: %w", err)
 		return
 	}
+
+	stmt, err := tx.PrepareContext(ctx,
+		`INSERT INTO users (id, login, password) VALUES ($1, $2, $3)`)
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = stmt.Close()
+		if err != nil {
+			return
+		}
+	}()
+
+	_, err = stmt.ExecContext(ctx, u.ID, u.Login, u.Password)
+	if err != nil {
+		// если ошибка, то откатываем изменения
+		errRollback := tx.Rollback()
+		if errRollback != nil {
+			err = errRollback
+		}
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	now := time.Now()
+	timestamp := now.Format(time.RFC3339)
+
+	account := models.Account{
+		ID:        uuid.New().String(),
+		UserID:    u.ID,
+		CreatedAt: timestamp,
+		UpdatedAt: timestamp,
+	}
+
+	err = r.AddAccount(ctx, account)
+
 	return
 }

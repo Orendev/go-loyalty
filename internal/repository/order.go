@@ -12,7 +12,7 @@ import (
 )
 
 func (r *Repository) AddOrder(ctx context.Context, o models.Order) (err error) {
-	fmt.Println(o.UserID)
+
 	_, err = r.db.ExecContext(ctx, `insert into orders (id, number, user_id, uploaded_at) values ($1, $2, $3, $4)`, o.ID, o.Number, o.UserID, o.UploadedAt)
 	if err != nil {
 		var pgErr *pgconn.PgError

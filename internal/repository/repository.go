@@ -40,8 +40,30 @@ func (r *Repository) Bootstrap(ctx context.Context) error {
 	    CONSTRAINT fk_user
 	        FOREIGN KEY (user_id)
 	    		REFERENCES users(id)
-	    );   
-	    
+	    );
+
+	CREATE TABLE IF NOT EXISTS accounts (
+	    id UUID NOT NULL primary key, 
+	    current BIGINT NOT NULL UNIQUE DEFAULT 0,
+	    user_id UUID NOT NULL UNIQUE,
+	    created_at TIMESTAMP,
+		updated_at TIMESTAMP,
+	    CONSTRAINT fk_user
+	        FOREIGN KEY (user_id)
+	    		REFERENCES users(id)
+	    );
+
+	CREATE TABLE IF NOT EXISTS transacts (
+	    id UUID NOT NULL primary key, 
+	    amount BIGINT NOT NULL,
+	    debit BOOL DEFAULT false,
+	    order_number BIGINT NOT NULL UNIQUE,
+	    account_id UUID NOT NULL,
+		processed_at TIMESTAMP,
+	    CONSTRAINT fk_account
+	        FOREIGN KEY (account_id)
+	    		REFERENCES accounts(id)
+	    );
 	    `
 
 	_, err := r.db.ExecContext(
