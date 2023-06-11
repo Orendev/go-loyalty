@@ -85,3 +85,62 @@ func (a *App) PostWithdraw(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 }
+
+// GetWithdraw Получение информации о выводе средств
+func (a *App) GetWithdraw(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	limit := 100
+	w.Header().Set("Content-Type", "application/json")
+	userID, err := auth.GetAuthIdentifier(r.Context())
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	account, err := a.repo.GetAccountByUserID(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	withdrawResponse := make([]models.WithdrawResponse, 0, limit)
+
+	withdraws, err := a.repo.GetWithdrawByAccountID(r.Context(), account.ID, limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for _, withdraw := range withdraws {
+		// заполняем модель ответа
+		withdrawResponse = append(withdrawResponse, models.WithdrawResponse{
+			Order:       strconv.Itoa(withdraw.OrderNumber),
+			Sum:         withdraw.Amount,
+			ProcessedAt: withdraw.ProcessedAt,
+		})
+	}
+
+	// заполняем модель ответа
+	enc, err := json.Marshal(withdrawResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(withdrawResponse) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+
+	_, err = w.Write(enc)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+}

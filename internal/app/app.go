@@ -24,7 +24,7 @@ func (a *App) Routes(r chi.Router) chi.Router {
 		r.Get("/api/user/orders", a.GetOrders)
 		r.Get("/api/user/balance", a.GetBalance)
 		r.Post("/api/user/balance/withdraw", a.PostWithdraw)
-		//r.Get("/api/user/withdrawals", a.Login)
+		r.Get("/api/user/withdrawals", a.GetWithdraw)
 	})
 
 	// Public routes

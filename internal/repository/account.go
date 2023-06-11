@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-func (r *Repository) AddAccount(ctx context.Context, a models.Account) (err error) {
+func (r *Repository) AddAccount(ctx context.Context, a models.Account) error {
 	tx, err := r.db.Begin()
 	if err != nil {
-		return
+		return err
 	}
 
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO accounts (id, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4)`)
 	if err != nil {
-		return
+		return err
 	}
 	defer func() {
 		err = stmt.Close()
@@ -34,11 +34,10 @@ func (r *Repository) AddAccount(ctx context.Context, a models.Account) (err erro
 		if errRollback != nil {
 			err = errRollback
 		}
-		return
+		return err
 	}
 
-	err = tx.Commit()
-	return
+	return tx.Commit()
 }
 
 func (r *Repository) GetAccountByUserID(ctx context.Context, userID string) (*models.Account, error) {
@@ -67,16 +66,16 @@ func (r *Repository) GetAccountByUserID(ctx context.Context, userID string) (*mo
 	return &account, nil
 }
 
-func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, current int) (err error) {
+func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, current int) error {
 	tx, err := r.db.Begin()
 	if err != nil {
-		return
+		return err
 	}
 
 	stmt, err := tx.PrepareContext(ctx,
 		`UPDATE accounts SET current = $1, updated_at = $2 WHERE id = $3`)
 	if err != nil {
-		return
+		return err
 	}
 	defer func() {
 		err = stmt.Close()
@@ -95,9 +94,8 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, curren
 		if errRollback != nil {
 			err = errRollback
 		}
-		return
+		return err
 	}
 
-	err = tx.Commit()
-	return
+	return tx.Commit()
 }

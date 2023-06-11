@@ -19,16 +19,16 @@ func (r *Repository) Login(ctx context.Context, login, password string) (u model
 	return
 }
 
-func (r *Repository) AddUser(ctx context.Context, u models.User) (err error) {
+func (r *Repository) AddUser(ctx context.Context, u models.User) error {
 	tx, err := r.db.Begin()
 	if err != nil {
-		return
+		return err
 	}
 
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO users (id, login, password) VALUES ($1, $2, $3)`)
 	if err != nil {
-		return
+		return err
 	}
 	defer func() {
 		err = stmt.Close()
@@ -44,12 +44,12 @@ func (r *Repository) AddUser(ctx context.Context, u models.User) (err error) {
 		if errRollback != nil {
 			err = errRollback
 		}
-		return
+		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return
+		return err
 	}
 
 	now := time.Now()
@@ -62,7 +62,5 @@ func (r *Repository) AddUser(ctx context.Context, u models.User) (err error) {
 		UpdatedAt: timestamp,
 	}
 
-	err = r.AddAccount(ctx, account)
-
-	return
+	return r.AddAccount(ctx, account)
 }

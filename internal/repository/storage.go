@@ -14,6 +14,7 @@ type Storage interface {
 	UpdateAccountCurrent(ctx context.Context, id string, current int) (err error)
 	GetOrderByUserID(ctx context.Context, userID string, limit int) ([]models.Order, error)
 	GetAccountByUserID(ctx context.Context, userID string) (*models.Account, error)
+	GetWithdrawByAccountID(ctx context.Context, accountID string, limit int) ([]models.Transact, error)
 	Ping(ctx context.Context) error
 	Close() error
 }

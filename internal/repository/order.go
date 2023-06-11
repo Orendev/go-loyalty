@@ -12,18 +12,18 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *Repository) AddOrder(ctx context.Context, o models.Order) (err error) {
+func (r *Repository) AddOrder(ctx context.Context, o models.Order) error {
 
-	_, err = r.db.ExecContext(ctx, `insert into orders (id, number, user_id, uploaded_at) values ($1, $2, $3, $4)`, o.ID, o.Number, o.UserID, o.UploadedAt)
+	_, err := r.db.ExecContext(ctx, `insert into orders (id, number, user_id, uploaded_at) values ($1, $2, $3, $4)`, o.ID, o.Number, o.UserID, o.UploadedAt)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgerrcode.UniqueViolation == pgErr.Code {
 			err = ErrorDuplicate
 		}
 		err = fmt.Errorf("failed to exec data: %w", err)
-		return
+		return err
 	}
-	return
+	return err
 }
 
 func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit int) ([]models.Order, error) {
@@ -35,6 +35,7 @@ func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit 
 				FROM orders o
 					LEFT JOIN transacts t ON o.number = t.order_number AND t.debit=true
 				WHERE user_id = $1
+				ORDER BY uploaded_at
 				`, userID)
 	if err != nil {
 		return nil, err
