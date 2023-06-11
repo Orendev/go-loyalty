@@ -92,6 +92,7 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 		orderResponse = append(orderResponse, models.OrderResponse{
 			Number:     strconv.Itoa(order.Number),
 			Status:     order.Status,
+			Accrual:    order.Accrual,
 			UploadedAt: order.UploadedAt,
 		})
 	}

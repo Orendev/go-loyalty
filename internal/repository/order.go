@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/Orendev/go-loyalty/internal/logger"
@@ -29,10 +30,17 @@ func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit 
 
 	orders := make([]models.Order, 0, limit)
 
-	rows, err := r.db.QueryContext(ctx, `select id, number, status, user_id, uploaded_at from orders where user_id = $1 ORDER BY uploaded_at`, userID)
+	rows, err := r.db.QueryContext(ctx,
+		`SELECT o.id, o.number, o.status, o.user_id, o.uploaded_at, t.amount AS accrual
+				FROM orders o
+					LEFT JOIN transacts t ON o.number = t.order_number AND t.debit=true
+				WHERE user_id = $1
+				`, userID)
 	if err != nil {
 		return nil, err
 	}
+
+	var accrual sql.NullInt64
 
 	defer func() {
 		err := rows.Close()
@@ -44,10 +52,14 @@ func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit 
 	// пробегаем по всем записям
 	for rows.Next() {
 		var o models.Order
-		err = rows.Scan(&o.ID, &o.Number, &o.Status, &o.UserID, &o.UploadedAt)
+		err = rows.Scan(&o.ID, &o.Number, &o.Status, &o.UserID, &o.UploadedAt, &accrual)
 		if err != nil {
 			err = fmt.Errorf("failed to query data: %w", err)
 			return nil, err
+		}
+
+		if accrual.Valid {
+			o.Accrual = int(accrual.Int64)
 		}
 
 		orders = append(orders, o)
