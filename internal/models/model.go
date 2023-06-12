@@ -3,7 +3,7 @@ package models
 const (
 	Rate = 100 // в системе храним копейки 1р = 100 к (1б = 1р)
 
-	StatusOrderNew        = "NEW"        // заказ загружен в систему, но не попал в обработку;
+	//StatusOrderNew        = "NEW"        // заказ загружен в систему, но не попал в обработку;
 	StatusOrderProcessing = "PROCESSING" // вознаграждение за заказ рассчитывается;
 	StatusOrderInvalid    = "INVALID"    // система расчёта вознаграждений отказала в расчёте;
 	StatusOrderProcessed  = "PROCESSED"  // данные по заказу проверены и информация о расчёте успешно
