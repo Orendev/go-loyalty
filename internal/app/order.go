@@ -130,8 +130,6 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) checkUserOrder(ctx context.Context, number int, userID string) bool {
 	_, err := a.repo.GetOrderByNumber(ctx, number, userID)
-	if err != nil {
-		return false
-	}
-	return true
+
+	return err == nil
 }
