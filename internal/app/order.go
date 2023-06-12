@@ -53,7 +53,7 @@ func (a *App) PostOrders(w http.ResponseWriter, r *http.Request) {
 	err = a.repo.AddOrder(r.Context(), order)
 	if err != nil {
 		if errors.Is(err, repository.ErrorDuplicate) {
-			http.Error(w, err.Error(), http.StatusOK)
+			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)

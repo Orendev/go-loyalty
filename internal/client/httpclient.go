@@ -18,21 +18,21 @@ var (
 	ErrorGetAccrual = errors.New("get in accrual system was invalid")
 )
 
-type HttpClient struct {
+type HTTPClient struct {
 	repo          repository.Storage
 	accrualSystem config.AccrualSystem
 	accrualChan   chan models.Accrual
 }
 
-func NewHttpClient(ctx context.Context, repo repository.Storage, accrualSystem config.AccrualSystem, accrualChan chan models.Accrual) (*HttpClient, error) {
-	instance := &HttpClient{repo: repo, accrualSystem: accrualSystem, accrualChan: accrualChan}
+func NewHTTPClient(ctx context.Context, repo repository.Storage, accrualSystem config.AccrualSystem, accrualChan chan models.Accrual) (*HTTPClient, error) {
+	instance := &HTTPClient{repo: repo, accrualSystem: accrualSystem, accrualChan: accrualChan}
 
 	go instance.worker(ctx)
 
 	return instance, nil
 }
 
-func (h *HttpClient) GetAccrual(order int) (models.AccrualResponse, error) {
+func (h *HTTPClient) GetAccrual(order int) (models.AccrualResponse, error) {
 
 	resp, err := http.Get(fmt.Sprintf("%s/api/orders/%v", h.accrualSystem.Addr, order))
 	var accrualResponse models.AccrualResponse

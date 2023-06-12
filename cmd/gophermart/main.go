@@ -54,7 +54,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = client.NewHttpClient(context.Background(), repo, cfg.AccrualSystem, accrualChain)
+	_, err = client.NewHTTPClient(context.Background(), repo, cfg.AccrualSystem, accrualChain)
 	if err != nil {
 		log.Fatal(err)
 	}

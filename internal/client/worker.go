@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (h *HttpClient) worker(ctx context.Context) {
+func (h *HTTPClient) worker(ctx context.Context) {
 
 	logger.Log.Info("begin worker")
 
@@ -58,7 +58,7 @@ func (h *HttpClient) worker(ctx context.Context) {
 	logger.Log.Info("end worker")
 }
 
-func (h *HttpClient) addAccrual(ctx context.Context, accrual models.Accrual) error {
+func (h *HTTPClient) addAccrual(ctx context.Context, accrual models.Accrual) error {
 	account, err := h.repo.GetAccountByUserID(ctx, accrual.UserID)
 	if err != nil {
 		return err
