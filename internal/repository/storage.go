@@ -10,9 +10,11 @@ type Storage interface {
 	AddUser(ctx context.Context, u models.User) (err error)
 	AddAccount(ctx context.Context, a models.Account) (err error)
 	AddOrder(ctx context.Context, u models.Order) (err error)
-	AddWithdraw(ctx context.Context, t models.Transact) (err error)
-	UpdateAccountCurrent(ctx context.Context, id string, current int) (err error)
+	AddTransact(ctx context.Context, t models.Transact) (err error)
+	UpdateAccountCurrent(ctx context.Context, id string) (err error)
+	GetCurrent(ctx context.Context, accountID string) (int, error)
 	GetOrderByUserID(ctx context.Context, userID string, limit int) ([]models.Order, error)
+	UpdateStatusOrder(ctx context.Context, orderNumber int, status string) error
 	GetAccountByUserID(ctx context.Context, userID string) (*models.Account, error)
 	GetWithdrawByAccountID(ctx context.Context, accountID string, limit int) ([]models.Transact, error)
 	Ping(ctx context.Context) error

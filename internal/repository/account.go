@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -66,7 +68,12 @@ func (r *Repository) GetAccountByUserID(ctx context.Context, userID string) (*mo
 	return &account, nil
 }
 
-func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, current int) error {
+func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string) error {
+	current, err := r.GetCurrent(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -85,8 +92,7 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, curren
 	}()
 
 	now := time.Now()
-	updatedAt := now.Format(time.RFC3339)
-	_, err = stmt.ExecContext(ctx, current, updatedAt, id)
+	_, err = stmt.ExecContext(ctx, current, now.Format(time.RFC3339), id)
 
 	if err != nil {
 		// если ошибка, то откатываем изменения
@@ -98,4 +104,53 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string, curren
 	}
 
 	return tx.Commit()
+}
+
+func (r *Repository) GetCurrent(ctx context.Context, accountID string) (int, error) {
+	rows, err := r.db.QueryContext(ctx,
+		`SELECT sum(t.amount) AS amount, debit
+				FROM transacts t
+				WHERE t.account_id = $1
+				GROUP BY t.debit
+				ORDER BY t.debit DESC
+				`, accountID)
+	if err != nil {
+		return 0, err
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
+
+	var amount int
+	var debit bool
+	var current int
+
+	current = 0
+
+	// пробегаем по всем записям
+	for rows.Next() {
+		err = rows.Scan(&amount, &debit)
+		if err != nil {
+			err = fmt.Errorf("failed to query data: %w", err)
+			return 0, err
+		}
+
+		if debit {
+			current += amount
+		} else {
+			current -= amount
+		}
+	}
+
+	// проверяем на ошибки
+	err = rows.Err()
+	if err != nil {
+		return 0, err
+	}
+
+	return current, nil
 }

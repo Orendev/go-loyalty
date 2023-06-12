@@ -50,7 +50,13 @@ func (a *App) PostWithdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if account.Current < req.Sum {
+	current, err := a.repo.GetCurrent(r.Context(), account.ID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusPaymentRequired)
+		return
+	}
+
+	if current < req.Sum {
 		http.Error(w, "", http.StatusPaymentRequired)
 		return
 	}
@@ -69,14 +75,13 @@ func (a *App) PostWithdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = a.repo.AddWithdraw(r.Context(), transact)
+	err = a.repo.AddTransact(r.Context(), transact)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	current := account.Current - req.Sum
-	err = a.repo.UpdateAccountCurrent(r.Context(), account.ID, current)
+	err = a.repo.UpdateAccountCurrent(r.Context(), account.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

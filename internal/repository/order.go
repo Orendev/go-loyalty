@@ -74,3 +74,35 @@ func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit 
 
 	return orders, nil
 }
+
+func (r *Repository) UpdateStatusOrder(ctx context.Context, orderNumber int, status string) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.PrepareContext(ctx,
+		`UPDATE orders SET status = $1 WHERE number = $2`)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = stmt.Close()
+		if err != nil {
+			return
+		}
+	}()
+
+	_, err = stmt.ExecContext(ctx, status, orderNumber)
+
+	if err != nil {
+		// если ошибка, то откатываем изменения
+		errRollback := tx.Rollback()
+		if errRollback != nil {
+			err = errRollback
+		}
+		return err
+	}
+
+	return tx.Commit()
+}

@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"github.com/Orendev/go-loyalty/internal/app"
+	"github.com/Orendev/go-loyalty/internal/client"
 	"github.com/Orendev/go-loyalty/internal/config"
 	"github.com/Orendev/go-loyalty/internal/logger"
+	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"
 	"github.com/go-chi/chi/v5"
 	"log"
@@ -45,7 +47,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	a, err := app.NewApp(ctx, repo)
+	accrualChain := make(chan models.Accrual, 10)
+
+	a, err := app.NewApp(ctx, repo, accrualChain)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = client.NewHttpClient(context.Background(), repo, cfg.AccrualSystem, accrualChain)
 	if err != nil {
 		log.Fatal(err)
 	}

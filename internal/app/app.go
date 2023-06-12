@@ -3,12 +3,14 @@ package app
 import (
 	"context"
 	"github.com/Orendev/go-loyalty/internal/middlewares"
+	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"
 	"github.com/go-chi/chi/v5"
 )
 
 type App struct {
-	repo repository.Storage
+	repo        repository.Storage
+	accrualChan chan models.Accrual
 }
 
 func (a *App) Routes(r chi.Router) chi.Router {
@@ -36,7 +38,9 @@ func (a *App) Routes(r chi.Router) chi.Router {
 	return r
 }
 
-func NewApp(_ context.Context, repo repository.Storage) (*App, error) {
+func NewApp(_ context.Context, repo repository.Storage, accrualChan chan models.Accrual) (*App, error) {
 
-	return &App{repo: repo}, nil
+	instance := &App{repo: repo, accrualChan: accrualChan}
+
+	return instance, nil
 }

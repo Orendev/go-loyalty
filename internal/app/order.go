@@ -60,6 +60,8 @@ func (a *App) PostOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	a.accrualChan <- models.Accrual{Order: number, UserID: userID}
+
 	w.WriteHeader(http.StatusAccepted)
 
 }

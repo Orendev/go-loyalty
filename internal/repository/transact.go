@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *Repository) AddWithdraw(ctx context.Context, t models.Transact) error {
+func (r *Repository) AddTransact(ctx context.Context, t models.Transact) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
