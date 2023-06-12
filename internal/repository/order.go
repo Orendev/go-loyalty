@@ -26,6 +26,30 @@ func (r *Repository) AddOrder(ctx context.Context, o models.Order) error {
 	return err
 }
 
+func (r *Repository) GetOrderByNumber(ctx context.Context, number int, userID string) (models.Order, error) {
+	row := r.db.QueryRowContext(ctx,
+		`SELECT o.id, o.number, o.status, o.user_id, o.uploaded_at, t.amount AS accrual
+				FROM orders o
+					LEFT JOIN transacts t ON o.number = t.order_number AND t.debit=true
+				WHERE o.number = $1 AND user_id = $2`, number, userID)
+
+	order := models.Order{}
+
+	var accrual sql.NullInt64
+
+	err := row.Scan(&order.ID, &order.Number, &order.Status, &order.UserID, &order.UploadedAt, &accrual)
+	if err != nil {
+		err = fmt.Errorf("failed to query data: %w", err)
+		return order, err
+	}
+
+	if accrual.Valid {
+		order.Accrual = int(accrual.Int64)
+	}
+
+	return order, nil
+}
+
 func (r *Repository) GetOrderByUserID(ctx context.Context, userID string, limit int) ([]models.Order, error) {
 
 	orders := make([]models.Order, 0, limit)

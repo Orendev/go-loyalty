@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/Orendev/go-loyalty/internal/auth"
@@ -38,6 +39,13 @@ func (a *App) PostOrders(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	ok := a.checkUserOrder(r.Context(), number, userID)
+	if ok {
+		http.Error(w, "", http.StatusOK)
+		return
+	}
+
 	order := models.Order{
 		ID:         uuid.New().String(),
 		Number:     number,
@@ -118,4 +126,12 @@ func (a *App) GetOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (a *App) checkUserOrder(ctx context.Context, number int, userID string) bool {
+	_, err := a.repo.GetOrderByNumber(ctx, number, userID)
+	if err != nil {
+		return false
+	}
+	return true
 }
