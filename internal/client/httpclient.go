@@ -63,8 +63,7 @@ func (h *HTTPClient) GetAccrual(order int) (models.AccrualResponse, error) {
 		return accrualResponse, nil
 
 	case http.StatusTooManyRequests:
-		header := resp.Header
-		a := header["Retry-After"][0]
+		a := resp.Header.Get("Retry-After")
 		sec, err := strconv.Atoi(a)
 		if err != nil {
 			return accrualResponse, err
