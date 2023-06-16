@@ -2,9 +2,10 @@ package app
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/Orendev/go-loyalty/internal/auth"
 	"github.com/Orendev/go-loyalty/internal/models"
-	"net/http"
 )
 
 // GetBalance получение текущего баланса пользователя

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+
 	"github.com/Orendev/go-loyalty/internal/middlewares"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"

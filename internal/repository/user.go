@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/google/uuid"
-	"time"
 )
 
 func (r *Repository) Login(ctx context.Context, login, password string) (u models.User, err error) {

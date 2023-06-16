@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/jackc/pgerrcode"

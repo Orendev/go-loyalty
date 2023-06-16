@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+
 	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"go.uber.org/zap"

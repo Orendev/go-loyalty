@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"go.uber.org/zap"
-	"time"
 )
 
 func (r *Repository) AddAccount(ctx context.Context, a models.Account) error {

@@ -1,8 +1,9 @@
 package middlewares
 
 import (
-	"github.com/Orendev/go-loyalty/internal/auth"
 	"net/http"
+
+	"github.com/Orendev/go-loyalty/internal/auth"
 )
 
 func Auth(next http.Handler) http.Handler {

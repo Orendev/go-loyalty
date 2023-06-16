@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/Orendev/go-loyalty/internal/app"
 	"github.com/Orendev/go-loyalty/internal/client"
 	"github.com/Orendev/go-loyalty/internal/config"
@@ -9,9 +13,6 @@ import (
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"
 	"github.com/go-chi/chi/v5"
-	"log"
-	"net/http"
-	"time"
 )
 
 const (

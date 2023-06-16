@@ -2,12 +2,13 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/Orendev/go-loyalty/internal/auth"
-	"github.com/Orendev/go-loyalty/internal/models"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/Orendev/go-loyalty/internal/auth"
+	"github.com/Orendev/go-loyalty/internal/models"
+	"github.com/google/uuid"
 )
 
 // PostWithdraw Запрос на списание средств

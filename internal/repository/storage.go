@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/Orendev/go-loyalty/internal/models"
 )
 

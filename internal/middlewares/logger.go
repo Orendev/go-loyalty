@@ -1,10 +1,11 @@
 package middlewares
 
 import (
-	"github.com/Orendev/go-loyalty/internal/logger"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
+
+	"github.com/Orendev/go-loyalty/internal/logger"
+	"go.uber.org/zap"
 )
 
 func Logger(next http.Handler) http.Handler {

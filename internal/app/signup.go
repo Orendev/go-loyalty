@@ -5,11 +5,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"github.com/Orendev/go-loyalty/internal/auth"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"
 	"github.com/google/uuid"
-	"net/http"
 )
 
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {

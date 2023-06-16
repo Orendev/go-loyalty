@@ -3,6 +3,12 @@ package app_test
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/Orendev/go-loyalty/internal/app"
 	"github.com/Orendev/go-loyalty/internal/auth"
 	"github.com/Orendev/go-loyalty/internal/middlewares"
@@ -13,11 +19,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func TestApp_GetBalance(t *testing.T) {

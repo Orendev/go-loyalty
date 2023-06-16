@@ -2,11 +2,12 @@ package client
 
 import (
 	"context"
+	"time"
+
 	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"time"
 )
 
 func (h *HTTPClient) worker(ctx context.Context) {

@@ -1,9 +1,10 @@
 package middlewares
 
 import (
-	"github.com/Orendev/go-loyalty/internal/compress"
 	"net/http"
 	"strings"
+
+	"github.com/Orendev/go-loyalty/internal/compress"
 )
 
 func Gzip(next http.Handler) http.Handler {

@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Orendev/go-loyalty/internal/config"
-	"github.com/Orendev/go-loyalty/internal/models"
-	"github.com/Orendev/go-loyalty/internal/repository"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/Orendev/go-loyalty/internal/config"
+	"github.com/Orendev/go-loyalty/internal/models"
+	"github.com/Orendev/go-loyalty/internal/repository"
 )
 
 var (

@@ -4,9 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"net/http"
+
 	"github.com/Orendev/go-loyalty/internal/auth"
 	"github.com/Orendev/go-loyalty/internal/models"
-	"net/http"
 )
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {

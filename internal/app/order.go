@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/Orendev/go-loyalty/internal/auth"
-	"github.com/Orendev/go-loyalty/internal/models"
-	"github.com/Orendev/go-loyalty/internal/repository"
-	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/Orendev/go-loyalty/internal/auth"
+	"github.com/Orendev/go-loyalty/internal/models"
+	"github.com/Orendev/go-loyalty/internal/repository"
+	"github.com/google/uuid"
 )
 
 // PostOrders загрузка заказ
