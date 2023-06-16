@@ -6,8 +6,8 @@ import (
 
 type Account struct {
 	ID        string `json:"id" db:"id"`
-	Current   int    `json:"current" db:"curren"` // Сумма балов лояльности
-	Withdrawn int    `json:"withdrawn"`           // Сумма использованных за весь период регистрации баллов.
+	Current   int    `json:"current" db:"current"` // Сумма балов лояльности
+	Withdrawn int    `json:"withdrawn"`            // Сумма использованных за весь период регистрации баллов.
 	UserID    string `json:"user_id" db:"user_id"`
 	CreatedAt string `json:"created_at" db:"created_at"`
 	UpdatedAt string `json:"updated_at" db:"updated_at"`

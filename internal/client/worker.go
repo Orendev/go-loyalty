@@ -20,6 +20,7 @@ func (h *HTTPClient) worker(ctx context.Context) {
 
 		accrualResponse, err := h.GetAccrual(accrual.Order)
 		if err != nil {
+			logger.Log.Error("Error", zap.Any("GetAccrual", err))
 			continue
 		}
 
@@ -30,17 +31,20 @@ func (h *HTTPClient) worker(ctx context.Context) {
 			accrual.Accrual = accrualResponse.Accrual
 			err = h.addAccrual(ctx, accrual)
 			if err != nil {
+				logger.Log.Error("Error", zap.Any(models.StatusAccrualProcessed, err))
 				continue
 			}
 		case models.StatusAccrualInvalid:
 			err = h.repo.UpdateStatusOrder(ctx, accrual.Order, models.StatusOrderInvalid)
 			if err != nil {
+				logger.Log.Error("Error", zap.Any(models.StatusAccrualInvalid, err))
 				continue
 			}
 
 		case models.StatusAccrualProcessing:
 			err = h.repo.UpdateStatusOrder(ctx, accrual.Order, models.StatusOrderProcessing)
 			if err != nil {
+				logger.Log.Error("Error", zap.Any(models.StatusAccrualProcessing, err))
 				continue
 			}
 			h.accrualChan <- models.Accrual{Order: accrual.Order, UserID: accrual.UserID}

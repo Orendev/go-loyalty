@@ -29,10 +29,7 @@ func TestApp_GetBalance(t *testing.T) {
 
 	now := time.Now()
 
-	a, err := app.NewApp(context.Background(), s, make(chan models.Accrual, 10))
-	if err != nil {
-		require.NoError(t, err)
-	}
+	a := app.NewApp(context.Background(), s, make(chan models.Accrual, 10))
 
 	uri := "/api/user/balance"
 	r := chi.NewRouter()

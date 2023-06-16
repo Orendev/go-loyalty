@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+const (
+	StatusAccrualRegistered = "REGISTERED" // заказ зарегистрирован, но вознаграждение не рассчитано;
+	StatusAccrualInvalid    = "INVALID"    // заказ не принят к расчёту, и вознаграждение не будет начислено;
+	StatusAccrualProcessing = "PROCESSING" // расчёт начисления в процессе;
+	StatusAccrualProcessed  = "PROCESSED"  // расчёт начисления окончен;
+)
+
 type Accrual struct {
 	Order   int
 	Status  string
