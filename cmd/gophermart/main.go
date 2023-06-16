@@ -49,7 +49,7 @@ func main() {
 
 	a := app.NewApp(ctx, repo, accrualChain)
 
-	_, err = client.NewHTTPClient(context.Background(), repo, cfg.AccrualSystem, accrualChain)
+	_, err = client.NewHTTPClient(context.Background(), repo, cfg.AccrualSystem.Addr, accrualChain)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,23 +6,17 @@ import (
 	"github.com/caarlos0/env/v8"
 )
 
-type Database struct {
-	URI string `env:"DATABASE_URI"`
-}
-
-type Server struct {
-	Addr string `env:"RUN_ADDRESS"`
-}
-
-type AccrualSystem struct {
-	Addr string `env:"ACCRUAL_SYSTEM_ADDRESS"`
-}
-
 type Config struct {
-	Server        Server
-	Database      Database
-	AccrualSystem AccrualSystem
-	Size          int
+	Server struct {
+		Addr string `env:"RUN_ADDRESS"`
+	}
+	Database struct {
+		URI string `env:"DATABASE_URI"`
+	}
+	AccrualSystem struct {
+		Addr string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	}
+	Size int
 }
 
 var cfg = Config{}

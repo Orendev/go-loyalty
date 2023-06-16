@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Orendev/go-loyalty/internal/config"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/Orendev/go-loyalty/internal/repository"
 )
@@ -20,13 +19,13 @@ var (
 )
 
 type HTTPClient struct {
-	repo          repository.Storage
-	accrualSystem config.AccrualSystem
-	accrualChan   chan models.Accrual
+	repo        repository.Storage
+	addr        string
+	accrualChan chan models.Accrual
 }
 
-func NewHTTPClient(ctx context.Context, repo repository.Storage, accrualSystem config.AccrualSystem, accrualChan chan models.Accrual) (*HTTPClient, error) {
-	instance := &HTTPClient{repo: repo, accrualSystem: accrualSystem, accrualChan: accrualChan}
+func NewHTTPClient(ctx context.Context, repo repository.Storage, addr string, accrualChan chan models.Accrual) (*HTTPClient, error) {
+	instance := &HTTPClient{repo: repo, addr: addr, accrualChan: accrualChan}
 
 	go instance.worker(ctx)
 
@@ -35,7 +34,7 @@ func NewHTTPClient(ctx context.Context, repo repository.Storage, accrualSystem c
 
 func (h *HTTPClient) GetAccrual(order int) (models.AccrualResponse, error) {
 
-	resp, err := http.Get(fmt.Sprintf("%s/api/orders/%v", h.accrualSystem.Addr, order))
+	resp, err := http.Get(fmt.Sprintf("%s/api/orders/%v", h.addr, order))
 	var accrualResponse models.AccrualResponse
 	if err != nil {
 		return accrualResponse, err
