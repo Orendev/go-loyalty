@@ -9,15 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *Repository) Login(ctx context.Context, login, password string) (u models.User, err error) {
+func (r *Repository) Login(ctx context.Context, login, password string) (models.User, error) {
+	u := models.User{}
 	row := r.db.QueryRowContext(ctx, `select id, login from users where login = $1 AND password = $2`, login, password)
 
-	err = row.Scan(&u.ID, &u.Login)
+	err := row.Scan(&u.ID, &u.Login)
 	if err != nil {
 		err = fmt.Errorf("failed to query data: %w", err)
-		return
+		return u, err
 	}
-	return
+	return u, nil
 }
 
 func (r *Repository) AddUser(ctx context.Context, u models.User) error {

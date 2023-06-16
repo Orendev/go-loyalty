@@ -7,12 +7,12 @@ import (
 )
 
 type Storage interface {
-	Login(ctx context.Context, login, password string) (u models.User, err error)
-	AddUser(ctx context.Context, u models.User) (err error)
-	AddAccount(ctx context.Context, a models.Account) (err error)
-	AddOrder(ctx context.Context, u models.Order) (err error)
-	AddTransact(ctx context.Context, t models.Transact) (err error)
-	UpdateAccountCurrent(ctx context.Context, id string) (err error)
+	Login(ctx context.Context, login, password string) (models.User, error)
+	AddUser(ctx context.Context, u models.User) error
+	AddAccount(ctx context.Context, a models.Account) error
+	AddOrder(ctx context.Context, u models.Order) error
+	AddTransact(ctx context.Context, t models.Transact) error
+	UpdateAccountCurrent(ctx context.Context, id string) error
 	GetCurrent(ctx context.Context, accountID string) (int, error)
 	GetOrderByUserID(ctx context.Context, userID string, limit int) ([]models.Order, error)
 	GetOrderByNumber(ctx context.Context, number int, userID string) (models.Order, error)
