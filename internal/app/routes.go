@@ -14,24 +14,17 @@ func (a *App) Routes(r chi.Router) chi.Router {
 	r.Group(func(r chi.Router) {
 		r.Use(middlewares.Auth)
 
-		r.Route("/api/user", func(r chi.Router) {
-			r.Post("/orders", a.PostOrders)
-			r.Get("/orders", a.GetOrders)
-
-			r.Post("/balance/withdraw", a.PostWithdraw)
-			r.Get("/balance", a.GetBalance)
-
-			r.Get("/withdrawals", a.GetWithdraw)
-		})
-
+		r.Post("/api/user/orders", a.PostOrders)
+		r.Get("/api/user/orders", a.GetOrders)
+		r.Get("/api/user/balance", a.GetBalance)
+		r.Post("/api/user/balance/withdraw", a.PostWithdraw)
+		r.Get("/api/user/withdrawals", a.GetWithdraw)
 	})
 
 	// Public routes
 	r.Group(func(r chi.Router) {
-		r.Route("/api/user", func(r chi.Router) {
-			r.Post("/register", a.Signup)
-			r.Post("/login", a.Login)
-		})
+		r.Post("/api/user/register", a.Signup)
+		r.Post("/api/user/login", a.Login)
 	})
 
 	return r
