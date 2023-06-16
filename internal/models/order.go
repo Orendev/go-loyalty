@@ -2,7 +2,8 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
+
+	"github.com/Orendev/go-loyalty/internal/luhn"
 )
 
 const (
@@ -31,13 +32,7 @@ type OrderResponse struct {
 }
 
 func (o *Order) Validate() error {
-	var err error
-
-	if (o.Number%10+checksum(o.Number/10))%10 != 0 {
-		err = errors.New("the Number field is valid luhn")
-	}
-
-	return err
+	return luhn.Validate(o.Number)
 }
 
 func (order OrderResponse) MarshalJSON() ([]byte, error) {
@@ -56,23 +51,4 @@ func (order OrderResponse) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(aliasValue) // вызываем стандартный Marshal
-}
-
-func checksum(number int) int {
-	var luhn int
-
-	for i := 0; number > 0; i++ {
-		cur := number % 10
-
-		if i%2 == 0 { // even
-			cur = cur * 2
-			if cur > 9 {
-				cur = cur%10 + cur/10
-			}
-		}
-
-		luhn += cur
-		number = number / 10
-	}
-	return luhn % 10
 }

@@ -2,7 +2,8 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
+
+	"github.com/Orendev/go-loyalty/internal/luhn"
 )
 
 type Transact struct {
@@ -15,13 +16,8 @@ type Transact struct {
 }
 
 func (t *Transact) Validate() error {
-	var err error
 	number := t.OrderNumber
-	if (number%10+checksum(number/10))%10 != 0 {
-		err = errors.New("the Number field is valid luhn")
-	}
-
-	return err
+	return luhn.Validate(number)
 }
 
 func (t Transact) MarshalJSON() ([]byte, error) {

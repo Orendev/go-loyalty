@@ -2,8 +2,9 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"strconv"
+
+	"github.com/Orendev/go-loyalty/internal/luhn"
 )
 
 // WithdrawRequest описывает запрос клиента.
@@ -25,11 +26,7 @@ func (withdraw *WithdrawRequest) Validate() error {
 		return err
 	}
 
-	if (number%10+checksum(number/10))%10 != 0 {
-		err = errors.New("the Number field is valid luhn")
-	}
-
-	return err
+	return luhn.Validate(number)
 }
 
 // UnmarshalJSON реализует интерфейс json.Unmarshaler.
