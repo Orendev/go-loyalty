@@ -15,6 +15,14 @@ func (r *Repository) AddTransact(ctx context.Context, t models.Transact) error {
 		return err
 	}
 
+	defer func() {
+		// если ошибка, то откатываем изменения
+		err = tx.Rollback()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
+
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO transacts (id, amount, debit, order_number, account_id, processed_at) VALUES ($1, $2, $3, $4, $5, $6)`)
 	if err != nil {
@@ -31,11 +39,6 @@ func (r *Repository) AddTransact(ctx context.Context, t models.Transact) error {
 	_, err = stmt.ExecContext(ctx, t.ID, t.Amount, t.Debit, t.OrderNumber, t.AccountID, t.ProcessedAt)
 
 	if err != nil {
-		// если ошибка, то откатываем изменения
-		errRollback := tx.Rollback()
-		if errRollback != nil {
-			err = errRollback
-		}
 		return err
 	}
 

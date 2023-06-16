@@ -16,6 +16,12 @@ func (r *Repository) AddAccount(ctx context.Context, a models.Account) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		err = tx.Rollback()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
 
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO accounts (id, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4)`)
@@ -32,11 +38,6 @@ func (r *Repository) AddAccount(ctx context.Context, a models.Account) error {
 	_, err = stmt.ExecContext(ctx, a.ID, a.UserID, a.CreatedAt, a.UpdatedAt)
 
 	if err != nil {
-		// если ошибка, то откатываем изменения
-		errRollback := tx.Rollback()
-		if errRollback != nil {
-			err = errRollback
-		}
 		return err
 	}
 
@@ -80,6 +81,13 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string) error 
 		return err
 	}
 
+	defer func() {
+		err = tx.Rollback()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
+
 	stmt, err := tx.PrepareContext(ctx,
 		`UPDATE accounts SET current = $1, updated_at = $2 WHERE id = $3`)
 	if err != nil {
@@ -96,11 +104,6 @@ func (r *Repository) UpdateAccountCurrent(ctx context.Context, id string) error 
 	_, err = stmt.ExecContext(ctx, current, now.Format(time.RFC3339), id)
 
 	if err != nil {
-		// если ошибка, то откатываем изменения
-		errRollback := tx.Rollback()
-		if errRollback != nil {
-			err = errRollback
-		}
 		return err
 	}
 

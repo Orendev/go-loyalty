@@ -106,11 +106,20 @@ func (r *Repository) UpdateStatusOrder(ctx context.Context, orderNumber int, sta
 		return err
 	}
 
+	defer func() {
+		// если ошибка, то откатываем изменения
+		err = tx.Rollback()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
+
 	stmt, err := tx.PrepareContext(ctx,
 		`UPDATE orders SET status = $1 WHERE number = $2`)
 	if err != nil {
 		return err
 	}
+
 	defer func() {
 		err = stmt.Close()
 		if err != nil {
@@ -121,11 +130,6 @@ func (r *Repository) UpdateStatusOrder(ctx context.Context, orderNumber int, sta
 	_, err = stmt.ExecContext(ctx, status, orderNumber)
 
 	if err != nil {
-		// если ошибка, то откатываем изменения
-		errRollback := tx.Rollback()
-		if errRollback != nil {
-			err = errRollback
-		}
 		return err
 	}
 

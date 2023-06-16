@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Orendev/go-loyalty/internal/logger"
 	"github.com/Orendev/go-loyalty/internal/models"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 func (r *Repository) Login(ctx context.Context, login, password string) (models.User, error) {
@@ -27,6 +29,14 @@ func (r *Repository) AddUser(ctx context.Context, u models.User) error {
 		return err
 	}
 
+	defer func() {
+		// если ошибка, то откатываем изменения
+		err = tx.Rollback()
+		if err != nil {
+			logger.Log.Error("error", zap.Error(err))
+		}
+	}()
+
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO users (id, login, password) VALUES ($1, $2, $3)`)
 	if err != nil {
@@ -41,11 +51,6 @@ func (r *Repository) AddUser(ctx context.Context, u models.User) error {
 
 	_, err = stmt.ExecContext(ctx, u.ID, u.Login, u.Password)
 	if err != nil {
-		// если ошибка, то откатываем изменения
-		errRollback := tx.Rollback()
-		if errRollback != nil {
-			err = errRollback
-		}
 		return err
 	}
 
