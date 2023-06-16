@@ -15,10 +15,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const (
-	shutdownTimeout = 10 * time.Second
-)
-
 func main() {
 	cfg, err := config.NewConfig()
 	if err != nil {
@@ -29,6 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	shutdownTimeout := 10 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
