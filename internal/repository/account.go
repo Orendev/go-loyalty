@@ -133,8 +133,6 @@ func (r *Repository) GetCurrent(ctx context.Context, accountID string) (int, err
 	var debit bool
 	var current int
 
-	current = 0
-
 	// пробегаем по всем записям
 	for rows.Next() {
 		err = rows.Scan(&amount, &debit)
