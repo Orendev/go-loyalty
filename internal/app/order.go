@@ -43,7 +43,7 @@ func (a *App) PostOrders(w http.ResponseWriter, r *http.Request) {
 
 	ok := a.checkUserOrder(r.Context(), number, userID)
 	if ok {
-		http.Error(w, "", http.StatusOK)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 

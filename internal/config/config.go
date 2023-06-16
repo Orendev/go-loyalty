@@ -22,9 +22,10 @@ type Config struct {
 	Server        Server
 	Database      Database
 	AccrualSystem AccrualSystem
+	Size          int
 }
 
-var cfg Config = Config{}
+var cfg = Config{}
 
 func NewConfig() (*Config, error) {
 	err := env.Parse(&cfg)
@@ -43,6 +44,8 @@ func NewConfig() (*Config, error) {
 	if len(cfg.AccrualSystem.Addr) == 0 {
 		flag.StringVar(&cfg.AccrualSystem.Addr, "r", "", "address of the accrual system")
 	}
+
+	cfg.Size = 10
 
 	return &cfg, nil
 }

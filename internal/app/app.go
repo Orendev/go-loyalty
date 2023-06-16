@@ -12,9 +12,6 @@ type App struct {
 	accrualChan chan models.Accrual
 }
 
-func NewApp(_ context.Context, repo repository.Storage, accrualChan chan models.Accrual) (*App, error) {
-
-	instance := &App{repo: repo, accrualChan: accrualChan}
-
-	return instance, nil
+func NewApp(_ context.Context, repo repository.Storage, accrualChan chan models.Accrual) *App {
+	return &App{repo: repo, accrualChan: accrualChan}
 }

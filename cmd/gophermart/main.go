@@ -45,12 +45,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	accrualChain := make(chan models.Accrual, 10)
+	accrualChain := make(chan models.Accrual, cfg.Size)
 
-	a, err := app.NewApp(ctx, repo, accrualChain)
-	if err != nil {
-		log.Fatal(err)
-	}
+	a := app.NewApp(ctx, repo, accrualChain)
 
 	_, err = client.NewHTTPClient(context.Background(), repo, cfg.AccrualSystem, accrualChain)
 	if err != nil {
