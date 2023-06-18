@@ -49,12 +49,12 @@ func Run(cfg *config.Config) {
 
 	a := NewApp(ctx, repo, accrualChain)
 
-	_, err = client.NewHTTPClient(context.Background(), repo, cfg.AccrualSystem.Addr, accrualChain)
+	_, err = client.NewHTTPClient(ctx, repo, cfg.AccrualSystem.Addr, accrualChain)
 	if err != nil {
 		logger.Log.Error("failed to start client", zap.Error(err))
 	}
 
-	startServer(ctx, &http.Server{
+	a.startServer(ctx, &http.Server{
 		Addr:    cfg.Server.Addr,
 		Handler: a.Routes(chi.NewRouter()),
 	})
@@ -64,7 +64,7 @@ func NewApp(_ context.Context, repo repository.Storage, accrualChan chan models.
 	return &App{repo: repo, accrualChan: accrualChan}
 }
 
-func startServer(ctx context.Context, srv *http.Server) {
+func (a *App) startServer(ctx context.Context, srv *http.Server) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -84,7 +84,7 @@ func startServer(ctx context.Context, srv *http.Server) {
 	if err != nil {
 		log.Fatalf("failed to shudown server %s", err)
 	}
-
+	close(a.accrualChan)
 	wg.Wait()
 }
 
